@@ -1,19 +1,27 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
-import { signUp } from "../slices/authSlice";
+import { signUpAsync } from "../slices/authSlice";
 import { style } from '../styles/styles'
 
 export default function SignUp(){
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+    const [email, setEmail] = useState('');
+    const [nickname, setNickname] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordConfirm, setPasswordConfirm] = useState('');
     const dispatch = useDispatch();
     const history = useHistory();
 
     function formHandle(e){
         e.preventDefault();
-        dispatch(signUp({ email, password }));
-        history.push('/');    
+        
+        if(password === passwordConfirm){
+            dispatch(signUpAsync(email, nickname, password));
+            history.push('/login');   
+        }
+        else{
+            alert('Passwords is diffrent!')
+        }
     }
 
     return (
@@ -21,8 +29,12 @@ export default function SignUp(){
             <form style={ style.login } onSubmit={formHandle}>
                 <h3 style={style.h3}>Sign up</h3>
                 <label>
-                    Username<br />
+                    Email<br />
                     <input type='text' style={style.input} onChange={e => setEmail(e.target.value)} />
+                </label>
+                <label>
+                    <br />Nickname<br />
+                    <input type='text' style={style.input} onChange={e => setNickname(e.target.value)} />
                 </label>
                 <label>
                     <br/>Password<br/>
@@ -30,7 +42,7 @@ export default function SignUp(){
                 </label>
                 <label>
                     <br/>Password confirmation<br/>
-                    <input type='password' style={style.input} />
+                    <input type='password' style={style.input} onChange={e => setPasswordConfirm(e.target.value)} />
                 </label>
                 <input type='submit' value='Sign up' className='btn' style={style.btn} />
                 <div style={ style.link }>

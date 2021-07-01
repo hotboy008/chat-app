@@ -1,20 +1,37 @@
 import { Link, useHistory } from "react-router-dom";
 import { style } from "../styles/styles";
 import { loginAsync } from "../slices/authSlice";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+function validateEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 
 export default function Login(){
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
-
+    const user = useSelector(state => state.auth.currentUser);
     const history = useHistory();
+    
+    useEffect(() => {
+        if(user){
+            history.push('/');
+        }
+    }, [user, history]);
+
     const dispatch = useDispatch();
 
     function formHandle(e){
         e.preventDefault();
+
+        if(!validateEmail(email)){
+            alert('Email is faild!')
+            return 0;
+        }
+
         dispatch(loginAsync(email, password));
-        history.push('/');
     }
 
     return(

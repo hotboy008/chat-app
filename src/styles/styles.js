@@ -8,16 +8,14 @@ export const style = {
         padding: '5rem'
     },
     input:{
-        width: '100%',
-        padding: '0',
-        margin: '0',
-        boxSizing: 'border-box',
-        height: '2rem',
-        borderRadius: '0.15rem'
+        width: '100%'
     },
     btn:{
      width: '100%',
      marginTop: '5px' 
+    },
+    btnChat:{
+        marginLeft: '5px'
     },
     h3:{
         textAlign: 'center',

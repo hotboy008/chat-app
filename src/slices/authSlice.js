@@ -1,24 +1,42 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { auth } from '../firebase'
+import { auth, db } from '../firebase'
 
 export const loginAsync = (email, password) => dispatch =>{
-    auth.signInWithEmailAndPassword(email, password).then(user => dispatch(login(user.user)));
+    auth.signInWithEmailAndPassword(email, password);
+
+    auth.onAuthStateChanged(user => {
+        if(user){
+            dispatch(login(user.uid));
+        }
+    });
 }
+
+export const signUpAsync = (email, nickname, password) => () =>{
+    auth.createUserWithEmailAndPassword(email, password);
+
+    auth.onAuthStateChanged(user => {
+        if(user){
+            const usersDB = db.ref(`users/'user${user.uid}`);
+            usersDB.set({ user: user.email, nickname: nickname, id: user.uid});
+        }
+    })
+};
 
 export const authSlice = createSlice({
     name: 'auth',
-    initialState:{
+    initialState:{ 
         currentUser: null
     },
     reducers:{
         login(state, action){
             state.currentUser = action.payload;
         },
-        signUp(state, action){
-            auth.createUserWithEmailAndPassword(action.payload.email, action.payload.password);
+        signOut(){
+            auth.signOut();
         }
     }
 });
 
-export const { login, signUp } = authSlice.actions;
+export const currentUserSelector = state => state.auth.currentUser;
+export const { login, signOut } = authSlice.actions;
 export default authSlice.reducer;

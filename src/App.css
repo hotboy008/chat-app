@@ -4,7 +4,7 @@ a{
 
 .btn{
   color: white;
-  background: linear-gradient(rgb(97, 86, 255), rgb(87, 75, 255));
+  background: #6d5dff;
   border: none;
   cursor: pointer;
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
@@ -12,17 +12,112 @@ a{
   0 1px 5px 0 rgba(0, 0, 0, 0.12);
   border-radius: 4px;
   min-width: 5rem;
-  height: 2rem;
+  height: 1.9rem;
   font-size: 14px;
   font-weight: 500;
   text-transform: uppercase;
 }
 
+.btn:disabled{
+  background: linear-gradient(rgb(143, 135, 255), rgb(141, 133, 255));
+}
+
+input[type='text'], input[type='password']{
+  color: white;
+  box-sizing: border-box;
+  border: none;
+  background-color: #6d5dff;
+  height: 1.8rem;
+  border-radius: 0.2rem;
+}
+
+input[type='text']:focus, input[type='password']:focus{
+  border: 1px rgb(122, 112, 255) solid;
+  outline: solid 2px rgb(97, 86, 255);
+}
+
 .container{
-  width: 80%;
+  width: 90%;
   height: 100vh;
   margin: 0 auto;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* CHAT PAGE */
+/* Dialog panel */
+.dialogPanel{
+  background-color: #5d9cff;
+  width: 29%;
+  border-radius: 0.2rem;
+}
+
+.chatContainer{
+  width: 100%;
+  margin: 0 auto;
+}
+
+.chatCard{
+  color: white;
+  font-size: 16px;
+  width: 100%;
+  height: 2.3rem;
+  display: flex;
+  align-items: center;
+}
+
+.chatCard:hover{
+  background-color: #6d5dff;
+  cursor: pointer;
+}
+
+.controll{
+  display: flex;
+  align-items: center;
+  margin: 10px;
+}
+
+/* Chat panel */
+.chatPanel{
+  background-color:#5d9cff;
+  width: 70%;
+  border-radius: 0.2rem;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.messageContent{
+  margin-top: auto;
+  width: 100%;
+  margin: 5px;
+  margin: 0 auto;
+  color: white;
+  font-size: 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.chatRoom{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 85vh;
+}
+
+.message{
+  width: fit-content;
+  word-wrap: break-word;
+  max-width: 95%;
+  border-radius: 0.7rem;
+  padding: 5px 10px;
+  margin: 10px;
+}
+
+.messageControll{
+  width: 100%;
+  margin-top: auto;
 }
