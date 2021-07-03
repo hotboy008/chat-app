@@ -1,18 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { db } from "../firebase";
 
-export const createChatAsync = (uid1, uid2) => dispatch => {
+export const createChatAsync = (uid1, uid2)  => () => {
     const chatDB = db.ref(`chats/${uid1}${uid2}`);
 
     chatDB.set({ user1: uid1, user2: uid2, messages: [] });
 }
 
-export const getAllChatAsync = userId => dispatch => {
+export const getAllChatAsync = userId => (dispatch, getState) => {
     const chatDB = db.ref('chats');
     let chats = [];
     
     chatDB.once('value').then(snapshot => {
-        if(snapshot.val()){
+        if(snapshot.exists()){
             for (const [_, val] of Object.entries(snapshot.val())) {
                 chats.push(val);
             }
@@ -38,8 +38,8 @@ export const sendMessageAsync = text => (_, getState) => {
 
 export const updateChatsAsync = () => dispatch => {
     const chatDB = db.ref('/chats');
-    chatDB.on('value', snapshot => {
-        if(snapshot.val()){
+    chatDB.on('child_added', snapshot => {
+        if(snapshot.exists()){
             dispatch(updateChats(snapshot.val()));
         }
     })
@@ -48,13 +48,15 @@ export const updateChatsAsync = () => dispatch => {
 export const updateMessageAsync = () => (dispatch, getState) => {
     const currentChat = getState().chats.currentChat;
 
-    const msgDB = db.ref(`chats/${currentChat[0].user1}${currentChat[0].user2}/messages`);
-    msgDB.on('child_added', snapshot => {
-        if(snapshot.val()){
-            console.log("lov: " + snapshot.val());
-            dispatch(updateMessage(snapshot.val()));
+    if(currentChat[0]){
+        const msgDB = db.ref(`chats/${currentChat[0].user1}${currentChat[0].user2}/messages`);
+
+        msgDB.on('child_added', snapshot => {
+        if(snapshot.exists()){
+            dispatch(updateMessage([snapshot.key, snapshot.val()]));
         }
     });
+    }
 }
 
 const chatSlice = createSlice({
@@ -74,8 +76,14 @@ const chatSlice = createSlice({
             state.chats.push(action.payload);
         },
         updateMessage(state, action){
-            if(action.payload){
-                Object.assign(state.currentChat[0].messages, { [Date.now()]: action.payload });
+            if(state.currentChat[0].messages){
+                if(!state.currentChat[0].messages.hasOwnProperty(action.payload[0])){
+                    Object.assign(state.currentChat[0].messages, { [action.payload[0]]: action.payload[1] });
+                }
+            }
+            else{
+                Object.assign(state.currentChat[0], { messages: {} });
+                Object.assign(state.currentChat[0].messages, { [action.payload[0]]: action.payload[1] });
             }
         },
     }

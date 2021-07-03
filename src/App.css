@@ -59,6 +59,23 @@ input[type='text']:focus, input[type='password']:focus{
   margin: 0 auto;
 }
 
+.btnLogout{
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+}
+
+.btnDialog{
+  z-index: 1;
+  cursor: pointer;
+  display: none;
+}
+
+.btnChat{
+  margin-left: 5px;
+}
+
 .chatCard{
   color: white;
   font-size: 16px;
@@ -66,6 +83,9 @@ input[type='text']:focus, input[type='password']:focus{
   height: 2.3rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .chatCard:hover{
@@ -86,17 +106,17 @@ input[type='text']:focus, input[type='password']:focus{
   border-radius: 0.2rem;
   color: white;
   display: flex;
+  position: relative;
   flex-direction: column;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .messageContent{
-  margin-top: auto;
   width: 100%;
-  margin: 5px;
   margin: 0 auto;
   color: white;
   font-size: 16px;
+  max-height: 90%;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -117,7 +137,58 @@ input[type='text']:focus, input[type='password']:focus{
   margin: 10px;
 }
 
+.userStatus{
+  font-size: 14px;
+  text-decoration: underline;
+  text-transform: uppercase;
+}
+
 .messageControll{
   width: 100%;
   margin-top: auto;
+}
+
+/* Media query */
+@media screen and (max-width: 1000px) {
+  .controll{
+    flex-wrap: wrap;
+  }
+  .controll input, .controll .btn{
+    width: 100%;
+    margin: 5px 0 !important;
+  }
+
+  .dialogPanel{
+    width: 40%;
+  }
+
+  .chatPanel{
+    width: 58%;
+  }
+
+  .messageContent{
+    max-height: 80%;
+  }
+}
+
+@media screen and (max-width: 700px){
+  .dialogPanel{
+    width: 100%;
+  }
+  
+  .chatPanel{
+    width: 100%;
+  }
+
+  .btnDialog{
+    display: block;
+  }
+
+  .messageContent{
+    max-height: 75%;
+  }
+
+  .chatRoom{
+    position: relative;
+  }
 }

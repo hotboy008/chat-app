@@ -3,9 +3,10 @@ import { useHistory } from "react-router-dom";
 import { currentUserSelector, signOut } from "../slices/authSlice";
 import DialogsPanel from "./dialogPanel";
 import ChatPanel from "./chatPanel";
-import { chatsSelector, messagesSelector, setCurrentChat, updateChats, updateChatsAsync, updateMessageAsync } from "../slices/chatSlice";
-import { useEffect } from "react";
+import { chatsSelector, messagesSelector, setCurrentChat, updateChatsAsync, updateMessageAsync } from "../slices/chatSlice";
+import { useEffect, useState } from "react";
 import { usersSelector } from "../slices/usersSlice";
+import { BiMenu } from 'react-icons/bi'
 
 export default function ChatRoom(){
     const history = useHistory();
@@ -15,13 +16,14 @@ export default function ChatRoom(){
     const currentChat = useSelector(state => state.chats.currentChat);
     const users = useSelector(usersSelector);
     let messages = useSelector(messagesSelector)
+    const [isShow, setIsShow] = useState(true);
 
     useEffect(() => {
         dispatch(updateChatsAsync());
-    }, [currentUser]);
+    }, []);
 
     useEffect(() => {
-        users.map(user => {
+        [...users].map(user => {
             if(user.id === currentUser){
                 document.title = user.nickname;
             }
@@ -49,20 +51,31 @@ export default function ChatRoom(){
         const chat = chats.filter(chat => (chat.user1 === idUser) || (chat.user2 === idUser));
 
         dispatch(setCurrentChat(chat));
+        dispatch(updateMessageAsync());
+    }
+
+    function switchDialog(){
+        setIsShow(prev => !prev);
     }
 
     return (
         <>
             <div className='container'>
                 <div className='chatRoom'>
-                    <div className='dialogPanel'>
-                        <DialogsPanel handleClick={clickChat} />
-                    </div>
-                    <div className='chatPanel'>
+                    {(!isShow || (document.body.offsetWidth >= 1000)) &&
+                        <div className='dialogPanel'>
+                            <DialogsPanel handleClick={clickChat} />
+                            <BiMenu className='btnDialog' size='38' style={{ position: 'absolute', bottom: '0px' }} onClick={switchDialog} color='white' />
+                        </div>}
+                    {isShow &&
+                        <div className='chatPanel'>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <BiMenu className='btnDialog' style={{ position: 'absolute', top: '-2px' }} size='38' onClick={switchDialog} />
+                            <button onClick={logOutHandle} className='btn btnLogout'>Logout</button>
+                        </div>
                         <ChatPanel messages={currentChat ? messages : undefined} />
-                    </div>
+                    </div>}
                 </div>
-                <button onClick={logOutHandle} className='btn' style={{ position:"absolute", top:'20px', right:'30px' }}>Logout</button>
             </div>
         </>
     )

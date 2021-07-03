@@ -4,7 +4,7 @@ import { db } from '../firebase';
 export const getAllUserAsync = () => dispatch =>{
     db.ref().child('/users').get().then(snapshot => {
         snapshot.forEach(user => {
-            dispatch(getAllUsers({ email: user.val().user, nickname: user.val().nickname, id: user.val().id }));
+            dispatch(getAllUsers({ status: user.val().status, nickname: user.val().nickname, id: user.val().id }));
         });
     });
 };
@@ -17,9 +17,11 @@ const usersSlice = createSlice({
     },
     reducers:{
         getAllUsers(state, action){
+            const ids = state.users.reduce((acc, user) => [...acc, user.id], []);
+
             state.loading = true;
-            
-            if(Object.keys(action.payload).length !== 0){
+
+            if((Object.keys(action.payload).length !== 0) && !ids.includes(action.payload.id)){
                 state.users.push(action.payload);
                 state.loading = false;
             }

@@ -3,6 +3,7 @@ import { getAllUserAsync, usersSelector } from '../slices/usersSlice';
 import { style } from '../styles/styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { chatsSelector, createChatAsync, getAllChatAsync } from '../slices/chatSlice';
+import propTypes from 'prop-types'
 
 export default function DialogsPanel({ handleClick }){
     useEffect(() => {
@@ -10,7 +11,7 @@ export default function DialogsPanel({ handleClick }){
         dispatch(getAllChatAsync(currentUser))
     }, []);
 
-    const [userEmail, setUserEmail] = useState('');
+    const [userNickname, setUserNickname] = useState('');
     const dispatch = useDispatch();
 
     const users = useSelector(usersSelector);
@@ -20,11 +21,11 @@ export default function DialogsPanel({ handleClick }){
     const currentChat = useSelector(state => state.chats.currentChat);
 
     function searchHandle(){
-        const user = users.find(user => user.email === userEmail);
+        const user = users.find(user => user.nickname === userNickname);
 
         if(user && (user.id !== currentUser)){
             dispatch(createChatAsync(currentUser, user.id));
-            setUserEmail('');
+            setUserNickname('');
         }
         else{
             alert("User not found!");
@@ -34,25 +35,31 @@ export default function DialogsPanel({ handleClick }){
     const chatUserId = chats.filter(chat => (chat.user1 === currentUser) || (chat.user2 === currentUser))
         .map(chat => (chat.user1 === currentUser) ? chat.user2 : chat.user1);
 
-    const emailIdPairs = users.reduce((acc, user) => !chatUserId.includes(user.id) ? acc : [...acc, [user.email, user.id]], []);
+    const nickIdPairs = [...users].reduce((acc, user) => !chatUserId.includes(user.id) ? acc : [...acc, [user.nickname, user.id]], []);
 
-    const chatCards = emailIdPairs.map(([email, id]) => {
+    const chatCards = nickIdPairs.map(([nickname, id]) => {
         return (
-            <div className='chatCard' style={ { backgroundColor: (currentChat.length > 0) && ((id === currentChat[0].user1) || (id === currentChat[0].user2))  ? '#5d70ff' : '' } } key={id} onClick={() => {
+            <div className='chatCard' style={ { backgroundColor: (currentChat.length > 0) &&
+            ((id === currentChat[0].user1) || (id === currentChat[0].user2))  ? '#5d70ff' : '' } } key={id} onClick={() => {
                 handleClick(id);
-                }}> {email} </div>
+                }}> {nickname} </div>
         )
     })
 
     return (
         <>
             <div className='controll'>
-                <input type='text' style={style.input} value={userEmail} onChange={e => setUserEmail(e.target.value)} placeholder='Email' />
-                <button className='btn' disabled={loading} style={style.btnChat} onClick={searchHandle} >Chat</button>
+                <input type='text' style={style.input} value={userNickname} onKeyDown={e => { (e.key === 'Enter') && searchHandle() } }
+                onChange={e => setUserNickname(e.target.value)} placeholder='Email' />
+                <button className='btn btnChat' disabled={loading} onClick={searchHandle} >Chat</button>
             </div>
             <div className='chatContainer'>
             { chatCards }
             </div>
         </>
     )
+}
+
+DialogsPanel.propTypes = {
+    handleClick: propTypes.func
 }

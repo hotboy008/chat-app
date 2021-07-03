@@ -1,6 +1,7 @@
 import { createRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { sendMessageAsync, updateMessageAsync } from "../slices/chatSlice";
+import { sendMessageAsync } from "../slices/chatSlice";
+import propTypes from "prop-types";
 
 export default function ChatPanel({ messages }){
     const [message, setMessage] = useState('');
@@ -14,17 +15,11 @@ export default function ChatPanel({ messages }){
         setMessage('');
     }
 
-    useEffect((() => {
-        if(currentChat[0]){
-            dispatch(updateMessageAsync());
-        }
-    }), [currentChat]);
-
     useEffect(() => {
         if(msgRef.current){
             msgRef.current.scrollTo(0, msgRef.current.scrollHeight - msgRef.current.offsetHeight);
         }
-    }, [messages])
+    })
 
     return (
         <>
@@ -37,11 +32,16 @@ export default function ChatPanel({ messages }){
                 </div>
                 <div className='controll'>
                     <input style={{ width: '100%', marginRight: '5px' }} type='text'
-                    placeholder='Enter a message' value={message} onChange={e => setMessage(e.target.value)} />
+                    placeholder='Enter a message' value={message} onKeyDown={ e => { (e.key === 'Enter') && handleSend() } }
+                    onChange={e => setMessage(e.target.value)} />
                     <button className='btn' onClick={handleSend}>Send</button>
                 </div>
             </> :
             <div style={{ margin: 'auto' }}>Select or start a chat</div>}
         </>
     )
+}
+
+ChatPanel.propTypes = {
+    messages: propTypes.array
 }

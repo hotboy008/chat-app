@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import { auth, db } from '../firebase'
 
 export const loginAsync = (email, password) => dispatch =>{
-    auth.signInWithEmailAndPassword(email, password);
+    auth.signInWithEmailAndPassword(email, password).catch(err => {
+        alert(err)
+    });
 
     auth.onAuthStateChanged(user => {
         if(user){
@@ -11,15 +13,34 @@ export const loginAsync = (email, password) => dispatch =>{
     });
 }
 
-export const signUpAsync = (email, nickname, password) => () =>{
-    auth.createUserWithEmailAndPassword(email, password);
+export const signUpAsync = (email, nickname, password) => dispatch =>{
+    let isNewNickname = true;
 
-    auth.onAuthStateChanged(user => {
-        if(user){
-            const usersDB = db.ref(`users/'user${user.uid}`);
-            usersDB.set({ user: user.email, nickname: nickname, id: user.uid});
+    db.ref('users').once('value').then(users => {
+        users.forEach(user => {
+            if(user.val().nickname === nickname){
+                isNewNickname = false;
+            }
+        })
+
+        if(isNewNickname){
+            auth.createUserWithEmailAndPassword(email, password).catch(err => {
+                alert(err)
+            }).then(() => {
+                auth.onAuthStateChanged(user => {
+                    if(user){
+                        const usersDB = db.ref(`users/'user${user.uid}`);
+                        usersDB.set({ id: user.uid, nickname: nickname});
+
+                        dispatch(login(user.uid));
+                    }
+                });
+            });
         }
-    })
+        else{
+            alert('Nickname alredy exist!')
+        }
+    });
 };
 
 export const authSlice = createSlice({

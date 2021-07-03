@@ -14,9 +14,6 @@ export const style = {
      width: '100%',
      marginTop: '5px' 
     },
-    btnChat:{
-        marginLeft: '5px'
-    },
     h3:{
         textAlign: 'center',
         fontSize: '60px',
