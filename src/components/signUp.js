@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { signUpAsync } from "../slices/authSlice";
 import { style } from '../styles/styles'
 
@@ -10,6 +10,7 @@ export default function SignUp(){
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const dispatch = useDispatch();
+    const history = useHistory();
 
     function formHandle(e){
         e.preventDefault();
@@ -21,6 +22,8 @@ export default function SignUp(){
             setNickname('');
             setPassword('');
             setPasswordConfirm('');
+
+            history.push('/');
         }
         else{
             alert('Passwords is diffrent!')

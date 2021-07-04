@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { chatsSelector, createChatAsync, getAllChatAsync } from '../slices/chatSlice';
 import propTypes from 'prop-types'
 
-export default function DialogsPanel({ handleClick }){
+export default function DialogsPanel({ handleClick, switchDialog }){
     useEffect(() => {
         dispatch(getAllUserAsync());
         dispatch(getAllChatAsync(currentUser))
@@ -42,6 +42,7 @@ export default function DialogsPanel({ handleClick }){
             <div className='chatCard' style={ { backgroundColor: (currentChat.length > 0) &&
             ((id === currentChat[0].user1) || (id === currentChat[0].user2))  ? '#5d70ff' : '' } } key={id} onClick={() => {
                 handleClick(id);
+                switchDialog();
                 }}> {nickname} </div>
         )
     })
@@ -61,5 +62,6 @@ export default function DialogsPanel({ handleClick }){
 }
 
 DialogsPanel.propTypes = {
-    handleClick: propTypes.func
+    handleClick: propTypes.func,
+    switchDialog: propTypes.func
 }

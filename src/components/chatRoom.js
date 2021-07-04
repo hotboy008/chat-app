@@ -64,7 +64,7 @@ export default function ChatRoom(){
                 <div className='chatRoom'>
                     {(!isShow || (document.body.offsetWidth >= 1000)) &&
                         <div className='dialogPanel'>
-                            <DialogsPanel handleClick={clickChat} />
+                            <DialogsPanel handleClick={clickChat} switchDialog={switchDialog} />
                             <BiMenu className='btnDialog' size='38' style={{ position: 'absolute', bottom: '0px' }} onClick={switchDialog} color='white' />
                         </div>}
                     {isShow &&
